@@ -1,12 +1,13 @@
 {
   "name": "expense-tracker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js -e js,html,hbs,css"
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js -e js,html,hbs,css",
+    "release": "standard-version"
   },
   "author": "awri.l",
   "license": "ISC",
