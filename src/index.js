@@ -3,17 +3,25 @@ const app = express();
 const port = process.env.PORT || 5000;
 const auth = require("./middlewares/auth");
 const UserModel = require("./models/UserModel");
+const cookieParser = require("cookie-parser");
 // DB
 require("./db/mongoose");
 
 app.use(express.json());
+app.use(cookieParser());
+app.use((req, res, next) => {
+  const authToken = req.cookies["authToken"];
+  req.token = authToken;
+  next();
+});
 
 app.get("/", (req, res) => {
   res.send({ message: "Hello, world!" });
 });
-app.get("/onlyauth", auth, (req, res) => {
+app.get("/anime", auth, (req, res) => {
   res.send(req.user);
 });
+
 app.post("/signup", async (req, res) => {
   try {
     const user = new UserModel(req.body);
