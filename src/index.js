@@ -68,7 +68,6 @@ app.post("/signin", async (req, res) => {
   }
 });
 app.get("/cards", auth, async (req, res) => {
-  console.log("CARDS GET");
   try {
     cards = await CashCardModel.find({
       owner: req.user._id,
@@ -82,6 +81,19 @@ app.get("/cards", auth, async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).send({ err: err });
+  }
+});
+// Add new card
+app.post("/cards", auth, async (req, res) => {
+  try {
+    const card = new CashCardModel({
+      ...req.body,
+      owner: req.user,
+    });
+    await card.save();
+    res.status(201).send(card);
+  } catch (err) {
+    res.status(500).send({ err: err.message });
   }
 });
 // Add new transaction to the card
