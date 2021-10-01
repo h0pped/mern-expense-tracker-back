@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const auth = require("./middlewares/auth");
 const UserModel = require("./models/UserModel");
+const CashCardModel = require("./models/CashCardModel");
 const cookieParser = require("cookie-parser");
 // DB
 require("./db/mongoose");
@@ -25,8 +26,11 @@ app.get("/anime", auth, (req, res) => {
 app.post("/signup", async (req, res) => {
   try {
     const user = new UserModel(req.body);
-    console.log(user);
+    const defaultCard = new CashCardModel({
+      owner: user._id,
+    });
     await user.save();
+    await defaultCard.save();
     const token = await user.generateAuthToken();
     res.cookie("authToken", token);
     return res.status(201).send({ user, token });
@@ -50,6 +54,21 @@ app.post("/signin", async (req, res) => {
       return res.send({ user, token });
     }
   } catch (err) {
+    res.status(500).send({ err: err });
+  }
+});
+app.get("/cards", auth, async (req, res) => {
+  try {
+    cards = await CashCardModel.find({
+      owner: req.user._id,
+    });
+    if (cards) {
+      res.send(cards);
+    } else {
+      res.status(404).send({ err: "No cards found" });
+    }
+  } catch (err) {
+    console.log(err);
     res.status(500).send({ err: err });
   }
 });
