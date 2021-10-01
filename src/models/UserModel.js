@@ -45,6 +45,7 @@ UserSchema.virtual("cards", {
   localField: "_id",
   foreignField: "owner",
 });
+
 UserSchema.statics.findByCredentials = async (email, password) => {
   const user = await UserModel.findOne({ email });
   if (!user) {
