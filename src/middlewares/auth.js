@@ -12,7 +12,7 @@ const auth = async (req, res, next) => {
         "tokens.token": token,
       });
       if (!user) {
-        throw new Error();
+        throw new Error("Wrong Credentials");
       }
       req.token = token;
       req.user = user;
@@ -21,7 +21,7 @@ const auth = async (req, res, next) => {
       throw new Error("You should be logged in");
     }
   } catch (err) {
-    res.send(err);
+    res.status(401).send({ err: err.message });
   }
 };
 module.exports = auth;

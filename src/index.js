@@ -23,7 +23,16 @@ app.get("/", (req, res) => {
 app.get("/anime", auth, (req, res) => {
   res.send(req.user);
 });
-
+app.get("/logout", auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((el) => el.token !== req.token);
+    await req.user.save();
+    res.clearCookie("authToken");
+    res.send();
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 app.post("/signup", async (req, res) => {
   try {
     const user = new UserModel(req.body);
@@ -59,10 +68,12 @@ app.post("/signin", async (req, res) => {
   }
 });
 app.get("/cards", auth, async (req, res) => {
+  console.log("CARDS GET");
   try {
     cards = await CashCardModel.find({
       owner: req.user._id,
     });
+    console.log("CARDS", cards);
     if (cards) {
       res.send(cards);
     } else {
