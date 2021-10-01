@@ -22,5 +22,10 @@ var CashCardSchema = mongoose.Schema({
 }, {
   timestamps: true
 });
+CashCardSchema.virtual("transactions", {
+  ref: "Transaction",
+  localField: "_id",
+  foreignField: "card"
+});
 var CashCardModel = new mongoose.model("CashCard", CashCardSchema);
 module.exports = CashCardModel;

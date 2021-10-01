@@ -4,6 +4,7 @@ const port = process.env.PORT || 5000;
 const auth = require("./middlewares/auth");
 const UserModel = require("./models/UserModel");
 const CashCardModel = require("./models/CashCardModel");
+const TransactionModel = require("./models/TransactionModel");
 const cookieParser = require("cookie-parser");
 // DB
 require("./db/mongoose");
@@ -72,7 +73,33 @@ app.get("/cards", auth, async (req, res) => {
     res.status(500).send({ err: err });
   }
 });
-
+// Add new transaction to the card
+app.post("/transactions/:id", auth, async (req, res) => {
+  const transaction = new TransactionModel({
+    ...req.body,
+    owner: req.user._id,
+    card: req.params.id,
+  });
+  try {
+    await transaction.save();
+    res.status(201).send(transaction);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ err: err });
+  }
+});
+// Get transactions of the card
+app.get("/card/:id/transactions/", auth, async (req, res) => {
+  const transactions = await TransactionModel.find({
+    card: req.params.id,
+    owner: req.user._id,
+  });
+  if (transactions) {
+    res.send(transactions);
+  } else {
+    res.status(404).send({ err: "Transactions not found" });
+  }
+});
 app.listen(port, () => {
   console.log(`Listening on ${port}`);
 });
