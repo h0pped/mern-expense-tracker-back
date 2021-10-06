@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middlewares/auth");
 const UserModel = require("../models/UserModel");
+const CashCardModel = require("../models/CashCardModel");
 router.post("/signup", async (req, res) => {
   try {
     const user = new UserModel(req.body);
@@ -22,7 +23,6 @@ router.post("/signup", async (req, res) => {
   }
 });
 router.post("/signin", async (req, res) => {
-  console.log("sign");
   try {
     const user = await UserModel.findByCredentials(
       req.body.email,

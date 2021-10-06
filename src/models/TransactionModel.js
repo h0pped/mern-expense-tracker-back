@@ -1,25 +1,30 @@
 const mongoose = require("mongoose");
 
-const TransactionSchema = mongoose.Schema({
-  title: {
-    type: String,
-    trim: true,
-    required: true,
-    default: "New Transaction",
+const TransactionSchema = mongoose.Schema(
+  {
+    title: {
+      type: String,
+      trim: true,
+      required: true,
+      default: "New Transaction",
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    card: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CashCard",
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
-  amount: {
-    type: Number,
-    required: true,
-  },
-  card: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "CashCard",
-  },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 async function isMatchOwners(transaction) {
   await transaction.populate("card");
